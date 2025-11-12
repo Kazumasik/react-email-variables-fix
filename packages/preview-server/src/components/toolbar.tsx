@@ -54,12 +54,14 @@ const ToolbarInner = ({
   prettyMarkup,
   reactMarkup,
   plainText,
+  previewProps,
   emailPath,
   emailSlug,
 }: ToolbarProps & {
   prettyMarkup: string;
   reactMarkup: string;
   plainText: string;
+  previewProps?: Record<string, any>;
   emailSlug: string;
   emailPath: string;
 }) => {
@@ -285,6 +287,7 @@ const ToolbarInner = ({
                 <ResendIntegration
                   emailSlug={emailSlug}
                   htmlMarkup={prettyMarkup}
+                  previewProps={previewProps}
                 />
               ) : (
                 <SuccessWrapper>
@@ -391,7 +394,8 @@ export function Toolbar({
   const { emailPath, emailSlug, renderedEmailMetadata } = usePreviewContext();
 
   if (renderedEmailMetadata === undefined) return null;
-  const { prettyMarkup, plainText, reactMarkup } = renderedEmailMetadata;
+  const { prettyMarkup, plainText, reactMarkup, previewProps } =
+    renderedEmailMetadata;
 
   return (
     <ToolbarInner
@@ -400,6 +404,7 @@ export function Toolbar({
       prettyMarkup={prettyMarkup}
       reactMarkup={reactMarkup}
       plainText={plainText}
+      previewProps={previewProps}
       serverLintingRows={serverLintingRows}
       serverSpamCheckingResult={serverSpamCheckingResult}
       serverCompatibilityResults={serverCompatibilityResults}

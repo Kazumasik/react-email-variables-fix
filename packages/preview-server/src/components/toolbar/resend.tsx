@@ -26,11 +26,13 @@ interface ResendItem {
 type ResendIntegrationProps = {
   emailSlug: string;
   htmlMarkup: string;
+  previewProps?: Record<string, any>;
 };
 
 export function ResendIntegration({
   emailSlug,
   htmlMarkup,
+  previewProps,
 }: ResendIntegrationProps) {
   const { emailsDirectoryMetadata } = useEmails();
   const [items, setItems] = useState<ResendItem[]>([]);
@@ -77,6 +79,7 @@ export function ResendIntegration({
               exportSingle({
                 name: emailSlug,
                 html: htmlMarkup,
+                previewProps,
               });
             }}
           >
@@ -128,6 +131,7 @@ export function ResendIntegration({
                   const exportResult = await exportSingleAsync({
                     name: templateName,
                     html: renderResult.markup,
+                    previewProps: renderResult.previewProps,
                   });
 
                   if (exportResult.data?.id) {

@@ -27,6 +27,7 @@ export interface RenderedEmailMetadata {
   markupWithReferences?: string;
   plainText: string;
   reactMarkup: string;
+  previewProps?: Record<string, any>;
 }
 
 export type EmailRenderingResult =
@@ -130,6 +131,7 @@ export const renderEmailByPath = async (
       markupWithReferences: markupWithReferences.replaceAll('\0', ''),
       plainText,
       reactMarkup,
+      previewProps,
     };
 
     cache.set(emailPath, renderingResult);
