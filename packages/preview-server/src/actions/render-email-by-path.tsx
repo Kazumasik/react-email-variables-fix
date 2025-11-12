@@ -41,12 +41,18 @@ const cache = new Map<string, EmailRenderingResult>();
 export const renderEmailByPath = async (
   emailPath: string,
   invalidatingCache = false,
+  overrideProps?: Record<string, any>,
 ): Promise<EmailRenderingResult> => {
+  // Don't cache when using override props
+  if (overrideProps) {
+    invalidatingCache = true;
+  }
+
   if (invalidatingCache) {
     cache.delete(emailPath);
   }
 
-  if (cache.has(emailPath)) {
+  if (cache.has(emailPath) && !overrideProps) {
     return cache.get(emailPath)!;
   }
 
@@ -88,7 +94,8 @@ export const renderEmailByPath = async (
     sourceMapToOriginalFile,
   } = componentResult;
 
-  const previewProps = Email.PreviewProps || {};
+  // Use override props if provided, otherwise use PreviewProps from component
+  const previewProps = overrideProps || Email.PreviewProps || {};
   const EmailComponent = Email as React.FC;
   try {
     const timeBeforeEmailRendered = performance.now();
@@ -131,10 +138,14 @@ export const renderEmailByPath = async (
       markupWithReferences: markupWithReferences.replaceAll('\0', ''),
       plainText,
       reactMarkup,
-      previewProps,
+      // Always return original PreviewProps, not the override ones
+      previewProps: Email.PreviewProps || {},
     };
 
-    cache.set(emailPath, renderingResult);
+    // Only cache if we're not using override props
+    if (!overrideProps) {
+      cache.set(emailPath, renderingResult);
+    }
 
     return renderingResult;
   } catch (exception) {

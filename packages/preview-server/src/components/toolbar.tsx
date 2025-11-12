@@ -286,6 +286,7 @@ const ToolbarInner = ({
               {hasSetupResendIntegration ? (
                 <ResendIntegration
                   emailSlug={emailSlug}
+                  emailPath={emailPath}
                   htmlMarkup={prettyMarkup}
                   previewProps={previewProps}
                 />

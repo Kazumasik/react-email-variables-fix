@@ -25,12 +25,14 @@ interface ResendItem {
 
 type ResendIntegrationProps = {
   emailSlug: string;
+  emailPath: string;
   htmlMarkup: string;
   previewProps?: Record<string, any>;
 };
 
 export function ResendIntegration({
   emailSlug,
+  emailPath,
   htmlMarkup,
   previewProps,
 }: ResendIntegrationProps) {
@@ -78,6 +80,7 @@ export function ResendIntegration({
 
               exportSingle({
                 name: emailSlug,
+                emailPath,
                 html: htmlMarkup,
                 previewProps,
               });
@@ -130,6 +133,7 @@ export function ResendIntegration({
 
                   const exportResult = await exportSingleAsync({
                     name: templateName,
+                    emailPath,
                     html: renderResult.markup,
                     previewProps: renderResult.previewProps,
                   });

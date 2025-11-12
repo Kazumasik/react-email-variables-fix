@@ -44,7 +44,8 @@ function createResendVariables(
 
 /**
  * Converts HTML with preview prop values to Resend template format
- * by replacing prop values with Resend variable syntax {{variableName}}
+ * by replacing prop values with Resend variable syntax {{{VARIABLE_NAME}}}
+ * Note: Resend requires TRIPLE curly braces, not double!
  */
 function convertToResendTemplate(
   html: string,
@@ -62,7 +63,8 @@ function convertToResendTemplate(
       return;
     }
 
-    const resendVariable = `{{${key}}}`;
+    // Resend requires TRIPLE curly braces
+    const resendVariable = `{{{${key}}}}`;
 
     // Escape special regex characters in the value
     const escapedValue = value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -94,21 +96,22 @@ export const exportSingleTemplate = baseActionClient
   .inputSchema(
     z.object({
       name: z.string(),
-      html: z.string(),
+      emailPath: z.string(),
+      html: z.string(), // Keep for backwards compatibility, but won't use it
       previewProps: z.record(z.string(), z.any()).optional(),
     }),
   )
   .action(async ({ parsedInput }) => {
     const resend = new Resend(resendApiKey);
 
-    // Convert preview prop values to Resend variables
+    // Generate variables array from preview props
+    const variables = createResendVariables(parsedInput.previewProps);
+
+    // Convert HTML by replacing prop values with {{variableName}} placeholders
     const htmlWithVariables = convertToResendTemplate(
       parsedInput.html,
       parsedInput.previewProps,
     );
-
-    // Generate variables array from preview props
-    const variables = createResendVariables(parsedInput.previewProps);
 
     // Log template creation details
     console.log('Creating Resend template:', {
